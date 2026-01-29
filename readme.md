@@ -1,4 +1,95 @@
 # Context Engineering in Self-Healing SQL Data Analyst
+1) Self-healing-SQL-Analyst
+This project builds a pipeline that:
+
+Takes a natural language question.
+
+Generates a SQL query via an LLM.
+
+Executes it against a database.
+
+If the query errors, it analyses the error (e.g., missing column, syntax issue) and generates a corrected SQL query.
+
+Retries up to a limit, logging failures and eventually giving a result or failure explanation.
+
+This is a form of retry-based self-correction where the system learns from error history and tries again until success or a retry limit.
+
+2) Context-Engineering-in-Self-healing-SQL-Analyst (CE-SQL-Analyst)
+   It focuses on enhancing the information (context) provided to the LLM before generating SQL — i.e., preparing the best possible instructions, schema details, examples, and metadata so that the LLM’s first output is as correct as possible.
+
+External sources about context engineering confirm that context isn’t just the natural language query; it’s the curated set of signals you give the LLM (system instructions, schema snippets, examples, history, etc.) that fundamentally affects how well it performs.
+
+Why context engineering matters in SQL analysis
+
+Your intuition is on the right track — context engineering does help improve correctness before retrying — but it’s more fundamental than that.
+
+Retry/self-healing: reactive correction
+
+You generate SQL → execute → if error, retry.
+
+Retries help fix mistakes after they happen.
+
+They lean on the LLM’s ability to correct its own errors by seeing the error message and trying again.
+
+This approach is reactive: it deals with mistakes after they occur.
+
+Context engineering: proactive guidance
+
+Before generating SQL, you give the LLM rich, curated context such as:
+
+a concise schema summary,
+
+clear role definitions,
+
+domain definitions (e.g., what “revenue” or “region” means),
+
+examples of valid queries,
+
+history of similar questions.
+
+This reduces the chance of an incorrect SQL generation in the first place.
+
+Thus context engineering is proactive — shaping the LLM’s input environment so it makes the right decision with fewer mistakes.
+
+Why context engineering isn’t just the same as retry loops
+
+Here’s a comparison:
+
+Aspect	Simple Retry	Context Engineering
+When does it help?	After an error occurs	Before generating SQL
+What does it rely on?	LLM’s self-correction abilities	Quality and completeness of context
+Efficiency	Can waste retries	Reduces need for retries
+Correctness	Often correct eventually	Aims for correct the first time
+LLM input	Minimal context	Wider, structured context
+
+Even with retries, if the LLM lacked essential context, it may produce repeated similar mistakes or require many retries. Good context engineering reduces that problem.
+
+Are they alternatives or complementary?
+
+Both are complementary.
+
+Context engineering improves the quality of the first SQL generation, increasing chances it’s correct and needs no retries.
+
+Self-healing retries then provide a safety net when context was not sufficient or when the LLM still errs.
+
+So it’s not “either/or” — it’s about combining good context with robust correction loops to maximize accuracy.
+
+What if you only used context engineering?
+
+If you design context extremely well — e.g., complete schema, domain knowledge, well-chosen examples — then it might significantly reduce the need for retries. But:
+
+LLMs are still probabilistic and can misinterpret even rich context on rare or complex queries.
+
+Some errors (like subtle edge-case syntax differences) are hard to eliminate solely by context.
+
+Therefore, context engineering reduces but does not fully replace self-healing in practice — at least with current LLM behavior.
+
+Summary
+
+✔ Self-healing SQL analysis is a correction mechanism that retries based on errors.
+✔ Context engineering is about structuring and enriching the LLM input to guide it to the right SQL without needing retries.
+✔ They are complementary: better context reduces retries and increases accuracy.
+✔ Good context engineering can reduce but not entirely replace self-healing, because LLMs can still err unpredictably.
 
 ## What is Context Engineering?
 
